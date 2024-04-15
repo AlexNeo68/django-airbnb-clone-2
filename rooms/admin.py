@@ -11,4 +11,45 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'name',
+        'country',
+        'city',
+        'address',
+        'guests',
+        'beds',
+        'bathrooms',
+        'price',
+        'check_in',
+        'check_out',
+        'instant_book',
+        'room_type',
+    )
+
+    list_filter = ('city', 'instant_book', 'country')
+
+    search_fields = ('^city', '^host__username')
+
+    filter_horizontal = (
+        'amenities',
+        'facilities',
+        'house_rules',
+    )
+
+    fieldsets = [
+        ('Basic information', {
+            'fields': [
+                'name',
+                'description',
+                'country',
+                'city',
+            ],
+        }),
+        ('Times', {
+            'fields': [
+                'check_in',
+                'check_out',
+                'instant_book',
+            ]
+        })
+    ]

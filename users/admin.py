@@ -7,6 +7,10 @@ from . models import User
 @admin.register(User)
 class AdminUser(UserAdmin):
     """AdminUser Model"""
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
+
+    list_filter = UserAdmin.list_filter + ('superhost',)
+
     fieldsets = UserAdmin.fieldsets + (
         (
             "Custom profile", {

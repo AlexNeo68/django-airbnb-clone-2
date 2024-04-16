@@ -1,30 +1,56 @@
 from django.contrib import admin
 from .models import Amenity, Facility, HouseRule, Photo, Room, RoomType
 
+
 @admin.register(RoomType, Facility, Amenity, HouseRule)
 class RoomTypeAdmin(admin.ModelAdmin):
-    pass
+    def used_by(self, obj):
+        return obj.rooms.count()
+
+    list_display = ('name', 'used_by')
+
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
+
+    def count_amenities(self, obj):
+        return obj.amenities.count()
+
+    def count_photos(self, obj):
+        return obj.photos.count()
+
+    def total_rating(self, obj):
+        reviews = obj.reviews.all()
+        ratings = []
+        for review in reviews:
+            ratings.append(review.avg_rating())
+        return 0
+
     list_display = (
         'name',
+        'total_rating',
         'country',
         'city',
         'address',
         'guests',
         'beds',
-        'bathrooms',
+        'bedrooms',
+        'baths',
         'price',
         'check_in',
         'check_out',
         'instant_book',
         'room_type',
+        'count_amenities',
+        'count_photos',
     )
+
+    count_amenities.short_description = 'Count of Amenities'
 
     list_filter = ('city', 'instant_book', 'country')
 
@@ -36,6 +62,8 @@ class RoomAdmin(admin.ModelAdmin):
         'house_rules',
     )
 
+    ordering = 'name', 'country', 'city', 'beds'
+
     fieldsets = [
         ('Basic information', {
             'fields': [
@@ -43,6 +71,9 @@ class RoomAdmin(admin.ModelAdmin):
                 'description',
                 'country',
                 'city',
+                'address',
+                'price',
+                'room_type'
             ],
         }),
         ('Times', {
@@ -51,5 +82,28 @@ class RoomAdmin(admin.ModelAdmin):
                 'check_out',
                 'instant_book',
             ]
-        })
+        }),
+        ('Spaces', {
+            'fields': [
+                'guests',
+                'beds',
+                'bedrooms',
+                'baths',
+
+            ]
+        }),
+        ('More about the Space', {
+            'fields': [
+                'amenities',
+                'facilities',
+                'house_rules',
+            ]
+        }),
+        (
+            'Last Details', {
+                'fields': [
+                    'host'
+                ]
+            }
+        )
     ]

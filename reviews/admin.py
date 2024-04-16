@@ -3,4 +3,4 @@ from .models import Review
 
 @admin.register(Review)
 class ReviewModel(admin.ModelAdmin):
-    pass
+    list_display = '__str__', 'avg_rating',

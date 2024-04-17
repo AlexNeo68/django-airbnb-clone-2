@@ -26,10 +26,10 @@ class RoomAdmin(admin.ModelAdmin):
 
     def total_rating(self, obj):
         reviews = obj.reviews.all()
-        ratings = []
+        all_ratings = 0
         for review in reviews:
-            ratings.append(review.avg_rating())
-        return 0
+            all_ratings += review.avg_rating()
+        return round(all_ratings/len(reviews), 2)
 
     list_display = (
         'name',

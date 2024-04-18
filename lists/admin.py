@@ -7,5 +7,8 @@ class ListAdmin(admin.ModelAdmin):
     list_display = 'name', 'count_rooms'
     filter_horizontal = 'rooms',
 
-    def count_rooms(self, obj):
-        return obj.rooms.count()
+    search_fields = 'name',
+
+
+
+

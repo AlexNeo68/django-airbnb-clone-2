@@ -70,3 +70,7 @@ class Room(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.city = str.capitalize(self.city)
+        super(Room, self).save(*args, **kwargs)

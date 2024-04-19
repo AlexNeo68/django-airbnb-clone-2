@@ -21,8 +21,13 @@ class PhotoAdmin(admin.ModelAdmin):
 
     get_thumbnail.short_description = 'Thumbnail'
 
+class PhotoInline(admin.TabularInline):
+    model = Photo
+
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
+
+    inlines = [PhotoInline]
 
     def count_amenities(self, obj):
         return obj.amenities.count()
@@ -36,6 +41,7 @@ class RoomAdmin(admin.ModelAdmin):
         for review in reviews:
             all_ratings += review.avg_rating()
         return round(all_ratings/len(reviews), 2)
+
 
     list_display = (
         'name',
@@ -56,11 +62,16 @@ class RoomAdmin(admin.ModelAdmin):
         'count_photos',
     )
 
+    # def save_model(self, request, obj, form, change):
+    #     super().save_model(self, request, obj, form, change)
+
     count_amenities.short_description = 'Count of Amenities'
 
     list_filter = ('city', 'instant_book', 'country')
 
     search_fields = ('^city', '^host__username')
+
+    raw_id_fields = ('host',)
 
     filter_horizontal = (
         'amenities',

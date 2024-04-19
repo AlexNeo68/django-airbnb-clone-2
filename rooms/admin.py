@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 from .models import Amenity, Facility, HouseRule, Photo, Room, RoomType
 
 
@@ -12,8 +14,12 @@ class RoomTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    pass
+    list_display = "__str__", "get_thumbnail"
 
+    def get_thumbnail(self, obj):
+        return mark_safe(f'<img width="50px" src="{obj.file.url}" width="')
+
+    get_thumbnail.short_description = 'Thumbnail'
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):

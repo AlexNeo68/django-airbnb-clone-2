@@ -17,7 +17,7 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = "__str__", "get_thumbnail"
 
     def get_thumbnail(self, obj):
-        return mark_safe(f'<img width="50px" src="{obj.file.url}" width="')
+        return mark_safe(f'<img width="50px" src="{obj.file.url}" />')
 
     get_thumbnail.short_description = 'Thumbnail'
 
@@ -38,9 +38,11 @@ class RoomAdmin(admin.ModelAdmin):
     def total_rating(self, obj):
         reviews = obj.reviews.all()
         all_ratings = 0
-        for review in reviews:
-            all_ratings += review.avg_rating()
-        return round(all_ratings/len(reviews), 2)
+        if len(reviews) > 0:
+            for review in reviews:
+                all_ratings += review.avg_rating()
+            return round(all_ratings/len(reviews), 2)
+        return 0
 
 
     list_display = (

@@ -5,4 +5,10 @@ from rooms.models import Room
 
 
 def all_rooms(request):
-    return HttpResponse(Room.objects.all())
+    rooms = Room.objects.all()
+    hungry = False
+    context = {
+        'rooms': rooms,
+        'hungry': hungry
+    }
+    return render(request, 'rooms/index.html', context)

@@ -2,27 +2,27 @@
 {% block content %}
 	<h1>Hello this is all page template!</h1>
     <ol>
-        {% for room in page.object_list %}
+        {% for room in object_list %}
             <li>{{ room.name }}</li>
         {% endfor %}
     </ol>
 
     <h5>
-        {% if page.has_previous %}
-            <a href="?page={{ page.number|add:-1 }}">Previous</a>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.number|add:-1 }}">Previous</a>
         {% endif %}
 
-        Page {{ page.number }} of {{ page.paginator.num_pages }}
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
 
-        {% if page.has_next %}
-            <a href="?page={{ page.number|add:1 }}">Next</a>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.number|add:1 }}">Next</a>
         {% endif %}
 
     </h5>
 
     <p class="pagination">
-        {% for p in page.paginator.page_range %}
-            {% if p == page.number %}
+        {% for p in page_obj.paginator.page_range %}
+            {% if p == page_obj.number %}
             	<b>{{ p }}</b>
             {% else %}
                 <a href="?page={{ p }}">{{ p }}</a>

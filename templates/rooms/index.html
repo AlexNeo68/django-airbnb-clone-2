@@ -1,9 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-	<h1>Hello this is all rooms template!</h1>
-    <ul>
-        {% for room in rooms %}
+	<h1>Hello this is all page template!</h1>
+    <ol>
+        {% for room in page.object_list %}
             <li>{{ room.name }}</li>
         {% endfor %}
-    </ul>
+    </ol>
+
+    <h5>
+        {% if page.has_previous %}
+            <a href="?page={{ page.number|add:-1 }}">Previous</a>
+        {% endif %}
+
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+
+        {% if page.has_next %}
+            <a href="?page={{ page.number|add:1 }}">Next</a>
+        {% endif %}
+
+    </h5>
+
+    <p class="pagination">
+        {% for p in page.paginator.page_range %}
+            {% if p == page.number %}
+            	<b>{{ p }}</b>
+            {% else %}
+                <a href="?page={{ p }}">{{ p }}</a>
+            {% endif %}
+
+        {% endfor %}
+    </p>
 {% endblock %}

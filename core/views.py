@@ -11,6 +11,7 @@ class RoomListView(ListView):
     model = Room
     paginate_by = 10
     paginate_orphans = 5
+    context_object_name = 'rooms'
 
 
 def all_rooms(request):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from core.models import TimeStampedModel
 from django_countries.fields import CountryField
@@ -74,3 +75,6 @@ class Room(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.city = str.capitalize(self.city)
         super(Room, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('rooms:detail', kwargs={'pk': self.pk})

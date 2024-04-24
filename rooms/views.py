@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from rooms.models import Room
 
 
 def room_details(request, pk):
-    try:
-        room = Room.objects.get(id=pk)
-        return render(request, 'rooms/room_detail.html', context={'room': room})
-    except Room.DoesNotExist:
-        return redirect('core:home')
+
+    room = get_object_or_404(Room, pk=pk)
+    return render(request, 'rooms/room_detail.html', context={'room': room})
+

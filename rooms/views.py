@@ -19,6 +19,7 @@ def search(request):
     city = str.capitalize(city)
     country = request.GET.get('country', '')
     room_type = int(request.GET.get('room_type', 0))
+    price = int(request.GET.get('price', 0))
     guests = int(request.GET.get('guests', 0))
     beds = int(request.GET.get('beds', 0))
     bedrooms = int(request.GET.get('bedrooms', 0))
@@ -43,6 +44,7 @@ def search(request):
         's_city': city,
         's_country': country,
         's_room_type': room_type,
+        's_price': price,
         's_guests': guests,
         's_beds': beds,
         's_bedrooms': bedrooms,
@@ -61,7 +63,31 @@ def search(request):
     if room_type:
         filters['room_type__pk'] = room_type
 
-    print(filters)
+    if price:
+        filters['price__lte'] = price
+
+    if guests:
+        filters['guests__gte'] = guests
+
+    if beds:
+        filters['beds__gte'] = beds
+
+    if bedrooms:
+        filters['bedrooms__gte'] = bedrooms
+
+    if baths:
+        filters['baths__gte'] = baths
+
+    if len(s_amenities) > 0:
+        for a_pk in s_amenities:
+            filters['amenities__pk'] = a_pk
+
+    if len(s_facilities) > 0:
+        for f_pk in s_facilities:
+            filters['facilities__pk'] = f_pk
+
+    if s_instant_book:
+        filters['instant_book'] = True
 
     rooms = Room.objects.filter(**filters)
 

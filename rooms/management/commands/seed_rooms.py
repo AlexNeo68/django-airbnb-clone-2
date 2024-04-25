@@ -6,6 +6,8 @@ from django_seed import Seed
 from users.models import User
 from rooms.models import Room, RoomType, Amenity, Facility, HouseRule, Photo
 
+from django_countries import countries
+
 
 class Command(BaseCommand):
     help = 'Seed rooms entities'
@@ -28,11 +30,12 @@ class Command(BaseCommand):
         for i in range(numbers):
 
             user = random.choice(users)
+            country = random.choice(countries)
 
             room = Room.objects.create(
                 name=seeder.faker.address(),
                 description=seeder.faker.address(),
-                country=seeder.faker.country(),
+                country=country.code,
                 city=seeder.faker.city(),
                 price=random.randint(1000, 10000),
                 address=seeder.faker.address(),

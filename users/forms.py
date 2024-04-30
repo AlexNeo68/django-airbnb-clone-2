@@ -19,18 +19,20 @@ class LoginForm(forms.Form):
             self.add_error('email', forms.ValidationError('User does not exist'))
 
 
-class SignupForm(forms.Form):
-    first_name = forms.CharField(max_length=140)
-    last_name = forms.CharField(max_length=140)
-    email = forms.EmailField()
+class SignupForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
     password = forms.CharField(widget=forms.PasswordInput)
     password1 = forms.CharField(widget=forms.PasswordInput)
 
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
-            self.add_error('email', forms.ValidationError('User already exists'))
-        return email
+            self.add_error('email', forms.ValidationError('Email already exists', code='existing user'))
+        else:
+            return email
 
     def clean_password1(self):
         password = self.cleaned_data['password']
@@ -39,13 +41,8 @@ class SignupForm(forms.Form):
             self.add_error('password', forms.ValidationError('Confirm your password'))
         return password
 
-    def save(self):
-        first_name = self.cleaned_data['first_name']
-        last_name = self.cleaned_data['last_name']
-        email = self.cleaned_data['email']
-        password = self.cleaned_data['password']
-
-        user = User.objects.create_user(email, email, password)
-        user.first_name = first_name
-        user.last_name = last_name
+    def save(self, *args, **kwargs):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['email']
+        user.set_password(self.cleaned_data['password'])
         user.save()

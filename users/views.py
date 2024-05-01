@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import LogoutView
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 
 from users.forms import LoginForm, SignupForm
+from users.models import User
 
 
 class LoginView(FormView):
@@ -44,4 +46,17 @@ class SignupView(FormView):
         if user is not None:
             login(self.request, user)
         user.verify_email()
+
         return super().form_valid(form)
+
+
+def complete_verification(request, secret):
+    try:
+        user = User.objects.get(email_secret=secret)
+        user.email_verified = True
+        user.email_secret = ''
+        user.save()
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+
+    return redirect(reverse('core:home'))

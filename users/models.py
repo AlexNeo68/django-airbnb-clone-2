@@ -1,6 +1,12 @@
+import uuid
 from random import choices
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
 from django.db import models
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+from config import settings
 
 
 # Create your models here.
@@ -42,4 +48,17 @@ class User(AbstractUser):
     email_secret = models.CharField(max_length=120, default='', blank=True)
 
     def verify_email(self):
-        pass
+        if self.email_verified is False:
+            secret = uuid.uuid4().hex[:20]
+            self.email_secret = secret
+            html_message = render_to_string('emails/verify.html', {'secret': secret})
+            send_mail(
+                'Email Verified',
+                strip_tags(html_message),
+                settings.EMAIL_FROM,
+                [self.email],
+                fail_silently=True,
+                html_message=html_message
+            )
+            self.save()
+        return

@@ -1,3 +1,6 @@
+import os
+
+import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import LogoutView
 from django.http import HttpResponse
@@ -60,3 +63,62 @@ def complete_verification(request, secret):
         return HttpResponse(status=404)
 
     return redirect(reverse('core:home'))
+
+
+def github_login(request):
+    client_id = os.environ.get('GITHUB_CLIENT_ID')
+    redirect_uri = 'http://127.0.0.1:8000/users/login/github/callback/'
+    scope = 'read:user'
+    github_url = f'https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}'
+
+    return redirect(github_url)
+
+
+def github_callback(request):
+    code = request.GET.get('code')
+
+    if code is not None:
+        client_id = os.environ.get('GITHUB_CLIENT_ID')
+        client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
+
+        url = f'https://github.com/login/oauth/access_token'
+        headers = {'Accept': 'application/json'}
+        payload = {'code': code, 'client_id': client_id, 'client_secret': client_secret}
+        result = requests.post(url, headers=headers, data=payload)
+        result_json = result.json()
+        error = result_json.get('error', None)
+        if error is not None:
+            return redirect(reverse('users:login'))
+        else:
+            access_token = result_json.get('access_token', None)
+            if access_token is not None:
+                url = f'https://api.github.com/user'
+                headers = {'Authorization': f'Bearer {access_token}'}
+                profile_request = requests.get(url, headers=headers)
+                profile_json = profile_request.json()
+                username = profile_json.get('login', None)
+                if username is not None:
+                    email = profile_json.get('email', None)
+
+                    print(username, email)
+
+                    try:
+                        User.objects.get(email=email)
+                        return redirect(reverse('users:login'))
+                    except User.DoesNotExist:
+                        name = profile_json.get('name', None)
+                        bio = profile_json.get('bio', None)
+                        user = User.objects.create(
+                            username=email,
+                            email=email,
+                            first_name=name,
+                            bio=bio
+                        )
+                        login(request, user)
+                        return redirect(reverse('core:home'))
+                else:
+                    return redirect(reverse('users:login'))
+            else:
+                return redirect(reverse('users:login'))
+    else:
+        return redirect(reverse('core:home'))

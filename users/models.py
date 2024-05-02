@@ -37,6 +37,15 @@ class User(AbstractUser):
         (USD, 'USD'),
     )
 
+    LOGIN_EMAIL = 'LOGIN_EMAIL'
+    LOGIN_GITHUB = 'LOGIN_GITHUB'
+    LOGIN_KAKAO = 'LOGIN_KAKAO'
+    LOGIN_CHOICES = (
+        (LOGIN_EMAIL, 'Login Email'),
+        (LOGIN_GITHUB, 'Login Github'),
+        (LOGIN_KAKAO, 'Login Kakao'),
+    )
+
     bio = models.TextField(default='', blank=True)
     gender = models.CharField(max_length=10, null=True, blank=True, choices=GENDER_CHOICES)
     avatar = models.ImageField(null=True, blank=True, upload_to='avatars')
@@ -46,6 +55,7 @@ class User(AbstractUser):
     superhost = models.BooleanField(default=False)
     email_verified = models.BooleanField(default=False)
     email_secret = models.CharField(max_length=120, default='', blank=True)
+    login_type = models.CharField(max_length=20, null=True, blank=True, choices=LOGIN_CHOICES, default=LOGIN_EMAIL)
 
     def verify_email(self):
         if self.email_verified is False:

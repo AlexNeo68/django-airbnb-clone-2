@@ -7,7 +7,7 @@ from . models import User
 @admin.register(User)
 class AdminUser(UserAdmin):
     """AdminUser Model"""
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'email_verified', 'email_secret',)
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'email_verified', 'login_type',)
 
     list_filter = UserAdmin.list_filter + ('superhost',)
 
@@ -22,6 +22,7 @@ class AdminUser(UserAdmin):
                     "currency",
                     "language",
                     "superhost",
+                    "login_type",
                 )
             }
         ),

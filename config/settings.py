@@ -40,6 +40,9 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_countries",
     "django_seed",
+    "tailwind",
+    "airbnb_clone",
+    "django_browser_reload",
 ]
 
 PROJECT_APPS = [
@@ -62,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -139,10 +143,14 @@ AUTH_USER_MODEL = "users.User"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 MEDIA_URL = "/media/"
 
-
 # Email configuration
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("MAILGUN_EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_EMAIL_HOST_PASSWORD")
 EMAIL_FROM = os.environ.get("EMAIL_FROM")
+TAILWIND_APP_NAME = 'airbnb_clone'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

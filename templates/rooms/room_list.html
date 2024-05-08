@@ -1,37 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
-	<h1>Hello this is all page template!</h1>
-    <ol>
-        {% for room in rooms %}
-            <li>
-                <a href="{{ room.get_absolute_url }}">
-                    {{ room.name }}
-                </a>
-            </li>
-        {% endfor %}
-    </ol>
 
-    <h5>
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.number|add:-1 }}">Previous</a>
-        {% endif %}
 
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    <div class="container mx-auto pb-10 px-4">
 
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.number|add:1 }}">Next</a>
-        {% endif %}
+        <div class="rounded-xl bg-gray-800 h-50vh mt-32 mb-24 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1714907135093-e60f0a730574?q=80&w=2436&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"></div>
 
-    </h5>
 
-    <p class="pagination">
-        {% for p in page_obj.paginator.page_range %}
-            {% if p == page_obj.number %}
-            	<b>{{ p }}</b>
-            {% else %}
-                <a href="?page={{ p }}">{{ p }}</a>
+        <h1>Hello this is all page template!</h1>
+        <ul class="grid grid-cols-4 gap-4">
+            {% for room in rooms %}
+                <li class="">
+                   {% include 'partials/room_card.html' with room=room %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h5>
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.number|add:-1 }}">Previous</a>
             {% endif %}
 
-        {% endfor %}
-    </p>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.number|add:1 }}">Next</a>
+            {% endif %}
+
+        </h5>
+
+        <p class="pagination">
+            {% for p in page_obj.paginator.page_range %}
+                {% if p == page_obj.number %}
+                    <b>{{ p }}</b>
+                {% else %}
+                    <a href="?page={{ p }}">{{ p }}</a>
+                {% endif %}
+
+            {% endfor %}
+        </p>
+
+    </div>
 {% endblock %}

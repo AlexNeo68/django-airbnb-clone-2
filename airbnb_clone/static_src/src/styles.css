@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 
+h1.title {
+  @apply text-black font-bold text-2xl mb-4
+}
+
 .search-box {
     transition: box-shadow 0.2s linear;
 }
@@ -42,7 +46,10 @@ select {
 }
 
 form {
-  .input {
+  label {
+    @apply text-sm font-medium;
+  }
+  input {
     @apply mb-3 w-full;
     &.has_error {
       input {

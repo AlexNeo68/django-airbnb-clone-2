@@ -3,6 +3,7 @@ import os
 import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import LogoutView
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -66,10 +67,16 @@ def complete_verification(request, secret):
 
 
 def github_login(request):
-    client_id = os.environ.get('GITHUB_CLIENT_ID')
-    redirect_uri = 'http://127.0.0.1:8000/users/login/github/callback/'
-    scope = 'read:user'
-    github_url = f'https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}'
+    try:
+        raise GithubException()
+
+        client_id = os.environ.get('GITHUB_CLIENT_ID')
+        redirect_uri = 'http://127.0.0.1:8000/users/login/github/callback/'
+        scope = 'read:user'
+        github_url = f'https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}'
+    except GithubException as e:
+        messages.error(request, 'error with login github')
+        return redirect(reverse('users:login'))
 
     return redirect(github_url)
 
@@ -82,6 +89,7 @@ def github_callback(request):
     code = request.GET.get('code')
 
     try:
+
         if code is not None:
             client_id = os.environ.get('GITHUB_CLIENT_ID')
             client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
@@ -130,5 +138,6 @@ def github_callback(request):
                     raise GithubException()
         else:
             raise GithubException()
-    except GithubException:
+    except GithubException as e:
+        messages.error(request, e)
         return redirect(reverse('users:login'))

@@ -10,7 +10,7 @@
         <ul class="grid grid-cols-4 gap-4">
             {% for room in rooms %}
                 <li class="">
-                   {% include 'partials/room_card.html' with room=room %}
+                   {% include 'mixins/room_card.html' with room=room %}
                 </li>
             {% endfor %}
         </ul>

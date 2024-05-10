@@ -24,12 +24,17 @@ class LoginView(FormView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(self.request, user)
+            messages.success(self.request, f'Welcome back {user.first_name}')
         return super(LoginView, self).form_valid(form)
 
 
 class LogOutView(LogoutView):
     next_page = reverse_lazy('core:home')
-    # template_name = 'users/logout.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.info(request, 'See you!')
+        logout(request)
+        return super(LogOutView, self).dispatch(request, *args, **kwargs)
 
 
 class SignupView(FormView):
@@ -49,6 +54,7 @@ class SignupView(FormView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(self.request, user)
+            messages.success(self.request, f'Welcome back {user.first_name}')
         user.verify_email()
 
         return super().form_valid(form)
@@ -68,8 +74,6 @@ def complete_verification(request, secret):
 
 def github_login(request):
     try:
-        raise GithubException()
-
         client_id = os.environ.get('GITHUB_CLIENT_ID')
         redirect_uri = 'http://127.0.0.1:8000/users/login/github/callback/'
         scope = 'read:user'
@@ -101,7 +105,7 @@ def github_callback(request):
             result_json = result.json()
             error = result_json.get('error', None)
             if error is not None:
-                raise GithubException()
+                raise GithubException("Github error: {}".format(error))
             else:
                 access_token = result_json.get('access_token', None)
                 if access_token is not None:
@@ -116,7 +120,7 @@ def github_callback(request):
                         try:
                             user = User.objects.get(email=email)
                             if user.login_type != User.LOGIN_GITHUB:
-                                raise GithubException()
+                                raise GithubException(f'User login type not correct, please with email {email}')
                         except User.DoesNotExist:
                             name = profile_json.get('name', None)
                             bio = profile_json.get('bio', None)
@@ -131,13 +135,14 @@ def github_callback(request):
                             user.save()
 
                         login(request, user)
+                        messages.success(request, f'Welcome back {user.first_name}!')
                         return redirect(reverse('core:home'))
                     else:
-                        raise GithubException()
+                        raise GithubException('Username is empty')
                 else:
-                    raise GithubException()
+                    raise GithubException('Invalid token')
         else:
-            raise GithubException()
+            raise GithubException('Code is empty')
     except GithubException as e:
         messages.error(request, e)
         return redirect(reverse('users:login'))

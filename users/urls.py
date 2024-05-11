@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import LoginView, LogOutView, SignupView, complete_verification, github_login, github_callback
+from .views import LoginView, LogOutView, SignupView, complete_verification, github_login, github_callback, ProfileView, ProfileUpdateView
 
 app_name = 'users'
 
@@ -11,4 +11,6 @@ urlpatterns = [
     path('logout/', LogOutView.as_view(), name='logout'),
     path('signup/', SignupView.as_view(), name='signup'),
     path('verify/<str:secret>', complete_verification, name='complete_verification'),
+    path('profile-edit/', ProfileUpdateView.as_view(), name='user-profile-edit'),
+    path('<int:pk>/', ProfileView.as_view(), name='user-profile'),
 ]

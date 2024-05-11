@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, DetailView, UpdateView
 
 from users.forms import LoginForm, SignupForm
 from users.models import User
@@ -146,3 +146,27 @@ def github_callback(request):
     except GithubException as e:
         messages.error(request, e)
         return redirect(reverse('users:login'))
+
+
+class ProfileView(DetailView):
+    model = User
+    context_object_name = 'obj_user'
+
+
+class ProfileUpdateView(UpdateView):
+    model = User
+    fields = [
+        'first_name',
+        'last_name',
+        'email',
+        'bio',
+        'gender',
+        'avatar',
+        'birthday',
+        'currency',
+        'language',
+    ]
+    template_name = 'users/profile_update.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user

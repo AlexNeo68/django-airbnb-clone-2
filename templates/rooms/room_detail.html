@@ -3,7 +3,7 @@
 	<h1>{{ room.name }}</h1>
     <p>{{ room.description }}</p>
 
-    <p>Host by: {{ room.host }}</p>
+    <p>Host by: <a class="border-b hover:border-transparent" href="{{ room.host.get_absolute_url }}">{{ room.host }}</a> </p>
 
     <h3>Amenities</h3>
     <ul>

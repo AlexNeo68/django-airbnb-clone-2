@@ -2,21 +2,24 @@ import os
 
 import requests
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, DetailView, UpdateView
 
 from users.forms import LoginForm, SignupForm
+from users.mixins import LoggedOutOnlyView
 from users.models import User
 
 
-class LoginView(FormView):
+class LoginView(LoggedOutOnlyView, SuccessMessageMixin, FormView):
     form_class = LoginForm
     template_name = 'users/login.html'
     success_url = reverse_lazy('core:home')
+    success_message = f'Welcome back'
 
     def form_valid(self, form):
         username = form.cleaned_data.get('email')
@@ -24,7 +27,6 @@ class LoginView(FormView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(self.request, user)
-            messages.success(self.request, f'Welcome back {user.first_name}')
         return super(LoginView, self).form_valid(form)
 
 
@@ -37,15 +39,11 @@ class LogOutView(LogoutView):
         return super(LogOutView, self).dispatch(request, *args, **kwargs)
 
 
-class SignupView(FormView):
+class SignupView(LoggedOutOnlyView, FormView):
     form_class = SignupForm
     template_name = 'users/signup.html'
     success_url = reverse_lazy('core:home')
-    initial = {
-        "first_name": "John",
-        "last_name": "Doe",
-        'email': 'alexneovic@gmail.com',
-    }
+    initial = {}
 
     def form_valid(self, form):
         form.save()
@@ -170,3 +168,15 @@ class ProfileUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class ChangePasswordView(PasswordChangeView):
+    template_name = 'users/change-password.html'
+    success_url = reverse_lazy('users:user-profile-edit')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been updated!')
+        form.save()
+        return super().form_valid(form)
+
+

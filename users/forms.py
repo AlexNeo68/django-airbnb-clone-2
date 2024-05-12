@@ -4,8 +4,8 @@ from users.models import User
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(initial='hmatthews@example.com')
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
 
     def clean(self):
         try:

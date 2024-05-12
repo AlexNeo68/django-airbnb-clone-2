@@ -50,7 +50,7 @@ form {
     @apply text-sm font-medium;
   }
   input {
-    @apply mb-3 w-full;
+    @apply w-full;
     &.has_error {
       input {
         @apply bg-red-200 border-gray-600;

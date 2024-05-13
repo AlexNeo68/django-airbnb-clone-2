@@ -45,6 +45,21 @@ class SignupView(LoggedOutOnlyView, FormView):
     success_url = reverse_lazy('core:home')
     initial = {}
 
+    def get_form(self, form_class=None):
+
+        form = super().get_form(form_class=form_class)
+        form.fields['first_name'].widget.attrs['placeholder'] = 'Your first name'
+        form.fields['last_name'].widget.attrs['placeholder'] = 'Your last name'
+        form.fields['email'].widget.attrs['placeholder'] = 'Your email'
+        form.fields['password'].widget.attrs['placeholder'] = 'Set your password here'
+        form.fields['password1'].label = 'Confirm password'
+        form.fields['password1'].widget.attrs = {
+            'label': 'Confirm your password',
+            'placeholder': 'Confirm your password here',
+
+        }
+        return form
+
     def form_valid(self, form):
         form.save()
         username = form.cleaned_data.get('email')
@@ -178,5 +193,3 @@ class ChangePasswordView(PasswordChangeView):
         messages.success(self.request, 'Your password has been updated!')
         form.save()
         return super().form_valid(form)
-
-

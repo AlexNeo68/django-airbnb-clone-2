@@ -11,7 +11,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, DetailView, UpdateView
 
 from users.forms import LoginForm, SignupForm
-from users.mixins import LoggedOutOnlyView
+from users.mixins import LoggedOutOnlyView, LoggedInOnlyView, OnlyUserEmailCanChangePassword
 from users.models import User
 
 
@@ -20,6 +20,12 @@ class LoginView(LoggedOutOnlyView, SuccessMessageMixin, FormView):
     template_name = 'users/login.html'
     success_url = reverse_lazy('core:home')
     success_message = f'Welcome back'
+
+    def get_success_url(self):
+        next_page = self.request.GET.get('next', None)
+        if next_page is not None:
+            return next_page
+        return self.request.user.get_absolute_url()
 
     def form_valid(self, form):
         username = form.cleaned_data.get('email')
@@ -30,7 +36,7 @@ class LoginView(LoggedOutOnlyView, SuccessMessageMixin, FormView):
         return super(LoginView, self).form_valid(form)
 
 
-class LogOutView(LogoutView):
+class LogOutView(LoggedInOnlyView, LogoutView):
     next_page = reverse_lazy('core:home')
 
     def dispatch(self, request, *args, **kwargs):
@@ -166,7 +172,7 @@ class ProfileView(DetailView):
     context_object_name = 'obj_user'
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(LoggedInOnlyView, UpdateView):
     model = User
     fields = [
         'first_name',
@@ -185,7 +191,7 @@ class ProfileUpdateView(UpdateView):
         return self.request.user
 
 
-class ChangePasswordView(PasswordChangeView):
+class ChangePasswordView(LoggedInOnlyView, OnlyUserEmailCanChangePassword, PasswordChangeView):
     template_name = 'users/change-password.html'
     success_url = reverse_lazy('users:user-profile-edit')
 

@@ -1,8 +1,6 @@
 <div class="mb-6">
 
-    {{ user.first_name }}
-
-    {% if user.avatar %}
+      {% if user.avatar %}
         <div class="h-20 w-20 flex bg-cover bg-center rounded-full" style="background-image: url({{ user.avatar.url }})"></div>
     {% else %}
         <div class="w-20 h-20 flex bg-gray-500 justify-center items-center text-white rounded-full">

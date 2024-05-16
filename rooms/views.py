@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import DetailView, View
+from django.views.generic import DetailView, View, UpdateView
 
 from rooms.forms import SearchForm
 from rooms.models import Room
@@ -13,6 +13,27 @@ def room_details(request, pk):
 
 class RoomDetailView(DetailView):
     model = Room
+
+
+class UpdateRoomView(UpdateView):
+    model = Room
+    template_name = 'rooms/room_edit.html'
+    fields = [
+        'name',
+        'description',
+        'country',
+        'city',
+        'price',
+        'address',
+        'guests',
+        'beds',
+        'bedrooms',
+        'baths',
+        'check_in',
+        'check_out',
+        'instant_book',
+        'room_type',
+    ]
 
 
 class SearchView(View):
@@ -89,8 +110,6 @@ class SearchView(View):
             form = SearchForm()
             context = {"search_form": form}
             return render(request, 'rooms/search.html', context)
-
-
 
 
 def search(request):

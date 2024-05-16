@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="photos flex gap-2 h-50vh mb-6">
+        <div class="w-1/2 h-full bg-center bg-cover" style="background-image: url({{ room.first_photo }})"></div>
+        <div class="w-1/2">
+            <div class="four_photos grid grid-cols-2 gap-2 w-full h-full flex-wrap">
+                {% for photo in room.get_next_four_photos %}
+                    <div class="bg-center bg-cover" style="background-image: url({{ photo.file.url }})"></div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

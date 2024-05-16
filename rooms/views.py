@@ -1,9 +1,11 @@
 from django.core.paginator import Paginator
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, View, UpdateView
 
 from rooms.forms import SearchForm
 from rooms.models import Room
+from users.mixins import LoginRequiredMixin
 
 
 def room_details(request, pk):
@@ -15,7 +17,7 @@ class RoomDetailView(DetailView):
     model = Room
 
 
-class UpdateRoomView(UpdateView):
+class UpdateRoomView(LoginRequiredMixin, UpdateView):
     model = Room
     template_name = 'rooms/room_edit.html'
     fields = [
@@ -34,6 +36,23 @@ class UpdateRoomView(UpdateView):
         'instant_book',
         'room_type',
     ]
+    context_object_name = 'room'
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404
+        return room
+
+
+class RoomPhotosView(LoginRequiredMixin, RoomDetailView):
+    template_name = 'rooms/room_photos.html'
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404
+        return room
 
 
 class SearchView(View):

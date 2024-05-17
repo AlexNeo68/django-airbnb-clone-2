@@ -1,14 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="photos flex gap-2 h-50vh mb-6">
-        <div class="w-1/2 h-full bg-center bg-cover" style="background-image: url({{ room.first_photo }})"></div>
-        <div class="w-1/2">
-            <div class="four_photos grid grid-cols-2 gap-2 w-full h-full flex-wrap">
-                {% for photo in room.get_next_four_photos %}
-                    <div class="bg-center bg-cover" style="background-image: url({{ photo.file.url }})"></div>
-                {% endfor %}
+    <h1 class="title">
+        {{ room.name }} room photos
+    </h1>
+    <div class="photo__list">
+
+        {% for photo in room.photos.all %}
+            <div class="border-section flex justify-between">
+                <div class="flex gap-2">
+                    <div class="bg-center bg-cover w-20 h-20" style="background-image: url({{ photo.file.url }})"></div>
+                    <div class="photo__info">
+                        <div>{{ photo.caption }}</div>
+                    </div>
+                </div>
+                <div class="photo__action flex flex-col gap-2">
+                    <a href="" class="btn-link text-sm px-4 bg-teal-500">Edit</a>
+                    <a href="{% url 'rooms:photo-remove' room.pk photo.pk %}" class="btn-link text-sm px-4 bg-red-500">Remove</a>
+                </div>
             </div>
-        </div>
+        {% endfor %}
 
     </div>
 

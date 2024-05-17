@@ -1,10 +1,12 @@
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import DetailView, View, UpdateView
 
 from rooms.forms import SearchForm
-from rooms.models import Room
+from rooms.models import Room, Photo
 from users.mixins import LoginRequiredMixin
 
 
@@ -195,3 +197,17 @@ def search(request):
     context = {"search_form": form, 'rooms': rooms}
 
     return render(request, 'rooms/search.html', context)
+
+
+def photo_delete(request, room_pk, photo_pk):
+    try:
+        room = Room.objects.get(pk=room_pk)
+        if room.host.pk != request.user.pk:
+            messages.error(request, 'You do not have permission to delete this photo.')
+            return redirect(reverse('rooms:room_detail', kwargs={'pk': room_pk}))
+        else:
+            Photo.objects.filter(pk=photo_pk).delete()
+            messages.success(request, 'Photo successfully deleted.')
+        return redirect(reverse('rooms:photos', kwargs={'pk': room_pk}))
+    except Room.DoesNotExist:
+        raise Http404

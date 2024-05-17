@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="photo__action flex flex-col gap-2">
-                    <a href="" class="btn-link text-sm px-4 bg-teal-500">Edit</a>
+                    <a href="{% url 'rooms:photo-edit' room.pk photo.pk %}" class="btn-link text-sm px-4 bg-teal-500">Edit</a>
                     <a href="{% url 'rooms:photo-remove' room.pk photo.pk %}" class="btn-link text-sm px-4 bg-red-500">Remove</a>
                 </div>
             </div>

@@ -1,8 +1,10 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, View, UpdateView
 
 from rooms.forms import SearchForm
@@ -199,6 +201,7 @@ def search(request):
     return render(request, 'rooms/search.html', context)
 
 
+@login_required
 def photo_delete(request, room_pk, photo_pk):
     try:
         room = Room.objects.get(pk=room_pk)
@@ -211,3 +214,23 @@ def photo_delete(request, room_pk, photo_pk):
         return redirect(reverse('rooms:photos', kwargs={'pk': room_pk}))
     except Room.DoesNotExist:
         raise Http404
+
+
+class UpdateRoomPhotoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Photo
+    template_name = 'rooms/room_photo_edit.html'
+    success_message = 'Photo successfully updated.'
+    pk_url_kwarg = 'photo_pk'
+    fields = [
+        'caption'
+    ]
+
+    def get_success_url(self):
+        return reverse_lazy('rooms:photos', kwargs={'pk': self.kwargs['room_pk']})
+
+    def get_object(self, queryset=None):
+        room = Room.objects.get(pk=self.kwargs['room_pk'])
+        photo = Photo.objects.get(pk=self.kwargs['photo_pk'])
+        if room.host.pk != self.request.user.pk:
+            raise Http404
+        return photo

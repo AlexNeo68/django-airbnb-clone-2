@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, View, UpdateView
+from django.views.generic import DetailView, View, UpdateView, CreateView, DeleteView
 
 from rooms.forms import SearchForm
 from rooms.models import Room, Photo
@@ -216,6 +216,17 @@ def photo_delete(request, room_pk, photo_pk):
         raise Http404
 
 
+class DeleteRoomPhotoView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Photo
+    template_name = 'rooms/room_photo_confirm_delete.html'
+    success_message = 'Photo successfully deleted.'
+    pk_url_kwarg = 'photo_pk'
+    context_object_name = 'photo'
+
+    def get_success_url(self):
+        return reverse('rooms:photos', kwargs={'pk': self.kwargs['room_pk']})
+
+
 class UpdateRoomPhotoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Photo
     template_name = 'rooms/room_photo_edit.html'
@@ -234,3 +245,37 @@ class UpdateRoomPhotoView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         if room.host.pk != self.request.user.pk:
             raise Http404
         return photo
+
+
+class CreateRoomPhotoView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Photo
+    template_name = 'rooms/room_photo_create.html'
+    success_message = 'Photo successfully upload'
+    fields = [
+        'caption',
+        'file',
+        # 'room'
+    ]
+
+    def get_success_url(self):
+        return reverse_lazy('rooms:photos', kwargs={'pk': self.kwargs['room_pk']})
+
+    def render_to_response(self, context, **response_kwargs):
+        context['room_pk'] = self.kwargs['room_pk']
+        return self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            using=self.template_engine,
+            **response_kwargs,
+        )
+
+    # def save(self, *args, **kwargs):
+    #     room = Room.objects.get(pk=self.kwargs['room_pk'])
+
+    def form_valid(self, form):
+        photo = form.save(commit=False)
+        room = Room.objects.get(pk=self.kwargs['room_pk'])
+        photo.room = room
+        photo.save()
+        return super().form_valid(form)

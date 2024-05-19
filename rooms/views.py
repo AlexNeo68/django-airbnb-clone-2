@@ -21,6 +21,42 @@ class RoomDetailView(DetailView):
     model = Room
 
 
+class CreateRoomView(LoginRequiredMixin, CreateView):
+    model = Room
+    template_name = 'rooms/room_create.html'
+    fields = [
+        'name',
+        'description',
+        'country',
+        'city',
+        'price',
+        'address',
+        'guests',
+        'beds',
+        'bedrooms',
+        'baths',
+        'check_in',
+        'check_out',
+        'instant_book',
+        'room_type',
+    ]
+
+    def render_to_response(self, context, **response_kwargs):
+        return self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            using=self.template_engine,
+            **response_kwargs,
+        )
+
+    def form_valid(self, form):
+        room = form.save(commit=False)
+        room.host = self.request.user
+        room.save()
+        return super().form_valid(form)
+
+
 class UpdateRoomView(LoginRequiredMixin, UpdateView):
     model = Room
     template_name = 'rooms/room_edit.html'

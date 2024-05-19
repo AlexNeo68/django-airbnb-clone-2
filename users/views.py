@@ -2,6 +2,7 @@ import os
 
 import requests
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -199,3 +200,13 @@ class ChangePasswordView(LoggedInOnlyView, OnlyUserEmailCanChangePassword, Passw
         messages.success(self.request, 'Your password has been updated!')
         form.save()
         return super().form_valid(form)
+
+
+@login_required
+def switch_hosting(request):
+    try:
+        del request.session['is_hosting']
+    except KeyError:
+        request.session['is_hosting'] = True
+    return redirect(reverse_lazy('core:home'))
+

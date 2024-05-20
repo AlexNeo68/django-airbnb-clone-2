@@ -32,6 +32,9 @@ class CreateRoomView(LoginRequiredMixin, CreateView):
         'price',
         'address',
         'guests',
+        'amenities',
+        'facilities',
+        'house_rules',
         'beds',
         'bedrooms',
         'baths',
@@ -54,6 +57,7 @@ class CreateRoomView(LoginRequiredMixin, CreateView):
         room = form.save(commit=False)
         room.host = self.request.user
         room.save()
+        form.save_m2m()
         return super().form_valid(form)
 
 
@@ -68,6 +72,9 @@ class UpdateRoomView(LoginRequiredMixin, UpdateView):
         'price',
         'address',
         'guests',
+        'amenities',
+        'facilities',
+        'house_rules',
         'beds',
         'bedrooms',
         'baths',

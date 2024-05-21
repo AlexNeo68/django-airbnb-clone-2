@@ -1,4 +1,6 @@
+
 {% extends 'base.html' %}
+{% load sexy_capitals %}
 {% block content %}
     <div class="photos flex gap-2 h-50vh mb-6">
         <div class="w-1/2 h-full bg-center bg-cover" style="background-image: url({{ room.first_photo }})"></div>
@@ -17,6 +19,8 @@
 
     <div class="room__info flex justify-between">
         <div class="w-2/3 mr-4">
+            {{ 'Anya hello!'|sexy_capitals }}
+
             <h1 class="text-xl font-medium">{{ room.name }}, {{ room.country.name }}</h1>
             <ul class="flex gap-4 text-sm list-disc list-inside">
                 <li class="list-none">

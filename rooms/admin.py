@@ -64,7 +64,7 @@ class RoomAdmin(admin.ModelAdmin):
 
     list_filter = ('city', 'instant_book', 'country')
 
-    search_fields = ('^city', '^host__username')
+    search_fields = ('^city', '^host__username', 'name')
 
     raw_id_fields = ('host',)
 

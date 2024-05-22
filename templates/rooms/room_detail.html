@@ -1,6 +1,7 @@
 
 {% extends 'base.html' %}
 {% load sexy_capitals %}
+{% load is_booked_day %}
 {% block content %}
     <div class="photos flex gap-2 h-50vh mb-6">
         <div class="w-1/2 h-full bg-center bg-cover" style="background-image: url({{ room.first_photo }})"></div>
@@ -133,9 +134,16 @@
                         </div>
                         <div class="cal-grid">
                             {% for day in calendar.get_days %}
+
+                                {% is_booked_day room day as booked %}
+
                                 {% if day.number != 0 %}
                                     {% if day.past %}
                                         <span class="bg-gray-200 w-full text-center rounded text-sm p-1 text-gray-300">
+                                            {{ day }}
+                                        </span>
+                                    {% elif booked %}
+                                        <span class="bg-gray-200 w-full line-through text-center rounded text-sm p-1 text-gray-300">
                                             {{ day }}
                                         </span>
                                     {% else %}

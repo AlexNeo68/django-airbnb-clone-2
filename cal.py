@@ -41,7 +41,3 @@ class Calendar(calendar.Calendar):
                 new_day = Day(number=day, past=past, month=self.month, year=self.year)
                 days.append(new_day)
         return days
-
-
-cal = Calendar(2019, 11)
-print(cal.get_days())

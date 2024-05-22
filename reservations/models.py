@@ -6,12 +6,15 @@ from core import models as core_models
 
 
 class BookedDay(core_models.TimeStampedModel):
-    day = models.DateTimeField()
-    reservation = models.ForeignKey('Reservation', on_delete=models.CASCADE)
+    day = models.DateField()
+    reservation = models.ForeignKey('Reservation', on_delete=models.CASCADE, related_name='booked_days')
 
     class Meta:
         verbose_name = 'Booked Day'
         verbose_name_plural = 'Booked Days'
+
+    def __str__(self):
+        return str(self.day)
 
 
 class Reservation(core_models.TimeStampedModel):

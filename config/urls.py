@@ -23,6 +23,7 @@ from config import settings
 urlpatterns = [
     path('', include('core.urls', namespace='core')),
     path('rooms/', include('rooms.urls', namespace='rooms')),
+    path('reservations/', include('reservations.urls', namespace='reservations')),
     path('users/', include('users.urls', namespace='users')),
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),

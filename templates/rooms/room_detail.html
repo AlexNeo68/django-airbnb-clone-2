@@ -147,9 +147,9 @@
                                             {{ day }}
                                         </span>
                                     {% else %}
-                                        <span class="bg-gray-200 w-full text-center rounded text-sm p-1 hover:bg-teal-300 hover:text-white cursor-pointer">
+                                        <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="bg-gray-200 w-full text-center rounded text-sm p-1 hover:bg-teal-300 hover:text-white cursor-pointer">
                                             {{ day }}
-                                        </span>
+                                        </a>
                                     {% endif %}
 
 

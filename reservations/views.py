@@ -44,3 +44,23 @@ class ReservationDetailView(View):
             raise Http404
         return render(self.request, 'reservations/detail.html', {'reservation': reservation})
 
+
+
+def edit_reservation(request, pk, verb):
+    reservation = Reservation.objects.get_or_none(pk=pk)
+    if not reservation or (reservation.guest != request.user and reservation.room.host != request.user):
+        raise Http404
+
+    if verb == 'cancel':
+        reservation.status = Reservation.STATUS_CANCELED
+        BookedDay.objects.filter(reservation=reservation).delete()
+    if verb == 'confirm':
+        reservation.status = Reservation.STATUS_CONFIRMED
+
+    reservation.save()
+
+    messages.success(request, 'Reservation updated!')
+    return redirect(reverse('reservations:detail', kwargs={'pk': reservation.pk}))
+
+
+

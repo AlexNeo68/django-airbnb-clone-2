@@ -28,6 +28,17 @@
                 </div>
             </div>
 
+            <div class="p-6 flex gap-4 w-full">
+                {% if reservation.status == 'pending' %}
+                    <div><a class="btn-link px-6 text-sm" href="{% url 'reservations:edit' reservation.pk 'cancel' %}">Cancel reservation</a></div>
+                    {% if reservation.room.host != user %}
+                        <div><a class="btn-link px-6 text-sm" href="{% url 'reservations:edit' reservation.pk 'confirm' %}">Confirm reservation</a></div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+
+
 
         </div>
 

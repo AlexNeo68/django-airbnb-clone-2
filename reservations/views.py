@@ -39,7 +39,8 @@ class ReservationDetailView(View):
 
         pk = kwargs['pk']
         reservation = Reservation.objects.get_or_none(pk=pk)
-        if not reservation:
+        # Проверка на то что разрешается сюда зайди только гостю который сделал резерв, или владельцу комнаты
+        if not reservation or (reservation.guest != self.request.user and reservation.room.host != self.request.user):
             raise Http404
         return render(self.request, 'reservations/detail.html', {'reservation': reservation})
 

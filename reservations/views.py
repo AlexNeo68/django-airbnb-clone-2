@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views.generic import View
 
 from reservations.models import BookedDay, Reservation
+from reviews.forms import ReviewForm
 from rooms.models import Room
 
 
@@ -42,7 +43,12 @@ class ReservationDetailView(View):
         # Проверка на то что разрешается сюда зайди только гостю который сделал резерв, или владельцу комнаты
         if not reservation or (reservation.guest != self.request.user and reservation.room.host != self.request.user):
             raise Http404
-        return render(self.request, 'reservations/detail.html', {'reservation': reservation})
+        form = ReviewForm()
+        context = {
+            'reservation': reservation,
+            'form': form,
+        }
+        return render(self.request, 'reservations/detail.html', context)
 
 
 

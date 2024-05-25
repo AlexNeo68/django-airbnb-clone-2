@@ -25,6 +25,7 @@ urlpatterns = [
     path('rooms/', include('rooms.urls', namespace='rooms')),
     path('reservations/', include('reservations.urls', namespace='reservations')),
     path('users/', include('users.urls', namespace='users')),
+    path('reviews/', include('reviews.urls', namespace='reviews')),
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
 ]

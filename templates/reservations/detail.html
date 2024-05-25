@@ -35,6 +35,16 @@
                         <div><a class="btn-link px-6 text-sm" href="{% url 'reservations:edit' reservation.pk 'confirm' %}">Confirm reservation</a></div>
                     {% endif %}
                 {% endif %}
+
+                {% if reservation.is_finished and reservation.status == 'confirmed' %}
+                    <form action="{% url 'reviews:review-create' reservation.room.pk %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="mt-4">
+                            <button type="submit" class="btn-link text-sm px-4">Save Review</button>
+                        </div>
+                    </form>
+                {% endif %}
             </div>
 
 

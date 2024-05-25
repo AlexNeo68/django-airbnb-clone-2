@@ -29,3 +29,6 @@ class Review(core_model.TimeStampedModel):
                      ) / 6, 2)
 
     avg_rating.short_description = 'AVG.'
+
+    class Meta:
+        ordering = ['-created']

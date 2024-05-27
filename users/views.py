@@ -1,14 +1,16 @@
 import os
 
 import requests
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView, PasswordChangeView
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
+from django.utils import translation
 from django.views.generic import FormView, DetailView, UpdateView
 
 from users.forms import LoginForm, SignupForm
@@ -210,3 +212,12 @@ def switch_hosting(request):
         request.session['is_hosting'] = True
     return redirect(reverse_lazy('core:home'))
 
+
+def switch_language(request):
+    response = HttpResponse(status=200)
+    lang = request.GET.get('lang')
+    if lang is not None:
+        translation.activate(lang)
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+
+    return response

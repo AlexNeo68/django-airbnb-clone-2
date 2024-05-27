@@ -1,10 +1,25 @@
+{% load i18n %}
     <footer class="py-12 mt-12 border-t">
         <div>
             <div class="text-center">
                 <i class="fa fa-copyright"></i> NBNB, Inc.
             </div>
+            <div class="text-center text-sm">
+                {% translate 'All right reserved. Please do not copy this site' %}
+            </div>
         </div>
 
     </footer>
+
+    <script>
+        selectLang = document.getElementById('js-lang')
+        selectLang.addEventListener('change', () => {
+            const lang = selectLang.value
+            fetch(`{% url 'users:user-switch-language' %}?lang=${lang}`).then(()=>{
+                window.location.reload()
+            })
+        })
+
+    </script>
 </body>
 </html>

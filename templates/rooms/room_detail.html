@@ -1,7 +1,9 @@
 
 {% extends 'base.html' %}
+{% load i18n %}
 {% load sexy_capitals %}
 {% load is_booked_day %}
+{% load on_faves %}
 {% block content %}
     <div class="photos flex gap-2 h-50vh mb-6">
         <div class="w-1/2 h-full bg-center bg-cover" style="background-image: url({{ room.first_photo }})"></div>
@@ -55,6 +57,23 @@
             <div class="border-section">
                 {{ room.description }}
             </div>
+
+            {% if user.email and room.host != user %}
+                {% on_faves room as in_faves %}
+            	<div class="mt-6">
+                    {% if in_faves %}
+                        <a href="{% url 'lists:add_room' room.pk %}" class="btn-link text-sm px-4 bg-teal-500">
+                            {% translate 'Remove from favorite' %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'lists:add_room' room.pk %}" class="btn-link text-sm px-4">
+                            {% translate 'Save to favorite' %}
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
 
             <div class="border-section">
                 <h4 class="font-medium text-lg mb-2">Amenities</h4>

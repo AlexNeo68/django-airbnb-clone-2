@@ -61,16 +61,13 @@
             {% if user.email and room.host != user %}
                 {% on_faves room as in_faves %}
             	<div class="mt-6">
-                    {% if in_faves %}
-                        <a href="{% url 'lists:add_room' room.pk %}" class="btn-link text-sm px-4 bg-teal-500">
+                    <a href="{% url 'lists:toggle-room' room.pk %}" class="btn-link text-sm px-4 bg-teal-500">
+                        {% if in_faves %}
                             {% translate 'Remove from favorite' %}
-                        </a>
-                    {% else %}
-                        <a href="{% url 'lists:add_room' room.pk %}" class="btn-link text-sm px-4">
+                        {% else %}
                             {% translate 'Save to favorite' %}
-                        </a>
-                    {% endif %}
-
+                        {% endif %}
+                    </a>
                 </div>
             {% endif %}
 

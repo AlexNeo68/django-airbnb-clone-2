@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block search_bar %}{% endblock %}
+{% block content %}
+
+
+    <div class="container mx-auto pb-10 px-4">
+
+        <h1 class="text-lg mb-4">My favorites houses</h1>
+
+
+        <ul class="grid grid-cols-4 gap-4">
+            {% for list in user.lists.all %}
+                {% for room in list.rooms.all %}
+                    <li class="">
+                       {% include 'mixins/room_card.html' with room=room %}
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+
+
+
+
+
+    </div>
+{% endblock %}

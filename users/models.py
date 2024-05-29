@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 
 from config import settings
+from core.managers import CustomManager
 
 
 # Create your models here.
@@ -58,6 +59,8 @@ class User(AbstractUser):
     email_secret = models.CharField(max_length=120, default='', blank=True)
     login_type = models.CharField(max_length=20, null=True, blank=True, choices=LOGIN_CHOICES, default=LOGIN_EMAIL)
 
+    objects = CustomManager()
+
     def get_absolute_url(self):
         return reverse('users:user-profile', kwargs={'pk': self.pk})
 
@@ -76,3 +79,9 @@ class User(AbstractUser):
             )
             self.save()
         return
+
+    def get_faves_count(self):
+        rooms_count = 0
+        for l in self.lists.all():
+            rooms_count += l.rooms.count()
+        return rooms_count

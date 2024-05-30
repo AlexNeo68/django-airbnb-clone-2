@@ -1,5 +1,5 @@
 import uuid
-from random import choices
+
 from django.contrib.auth.models import AbstractUser
 from django.core.mail import send_mail
 from django.db import models
@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 
 from config import settings
-from core.managers import CustomManager
+from core.managers import CustomUserManager
 
 
 # Create your models here.
@@ -59,7 +59,7 @@ class User(AbstractUser):
     email_secret = models.CharField(max_length=120, default='', blank=True)
     login_type = models.CharField(max_length=20, null=True, blank=True, choices=LOGIN_CHOICES, default=LOGIN_EMAIL)
 
-    objects = CustomManager()
+    objects = CustomUserManager()
 
     def get_absolute_url(self):
         return reverse('users:user-profile', kwargs={'pk': self.pk})

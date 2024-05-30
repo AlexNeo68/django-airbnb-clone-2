@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block page_title %}Reservation detail{% endblock %}
+
+{% block search_bar %}{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto my-10 flex flex-col">
+
+        <div class="conversation flex gap-12">
+
+            <div class="">
+                <h3 class="font-medium mb-2 text-lg">Participants</h3>
+                <div class="users flex gap-4">
+                    {% for u in conversation.participants.all  %}
+                        <div class="text-center">
+                            {% include "mixins/user_avatar.html" with user=u %}
+                            <div>{{ u.first_name }}</div>
+                        </div>
+                        {% if forloop.first %}
+                        	<div class="mt-6">&</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="border w-full p-4 rounded shadow">
+                <h3 class="font-medium mb-2 text-lg">Messages</h3>
+                <div class="messages flex flex-col gap-4">
+
+                    {% for m in conversation.messages.all %}
+                        <div class="flex {% if m.sender.pk == user.pk %}justify-end{% endif %}">
+                            <div class="flex p-2 rounded gap-4 {% if m.sender.pk == user.pk %}bg-gray-100 {% else %}bg-amber-100{% endif %}">
+                                {% include "mixins/user_avatar.html" with user=m.sender h_w='h-12 w-12' %}
+                                <div class="text-sm mt-2">
+                                    {{ m.message }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <form action="{% url 'conversations:detail' conversation.pk %}" class="mt-12" method="post">
+                    {% csrf_token %}
+                    <textarea name="message" id="message"></textarea>
+                    <button type="submit" class="btn-link text-sm">Send</button>
+                </form>
+            </div>
+
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+{% endblock %}
